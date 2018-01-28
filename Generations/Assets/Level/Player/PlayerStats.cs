@@ -19,7 +19,7 @@ public class PlayerStats : MonoBehaviour {
 				airJumps += 1;
 			if (pickup.type == PickupType.eye)
 				vision += 1;
-			Destroy(pickup.gameObject);
+			pickup.OnPickup();
 		}
 	}
 }

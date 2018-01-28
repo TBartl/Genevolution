@@ -69,6 +69,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
+  pickupTextPrefab: {fileID: 1325115153927820, guid: b641c4e7c3375e14580b1cfed414db7c,
+    type: 2}
+  displayText: "+1 WALL\r\nJUMP"
 --- !u!212 &212588924600556388
 SpriteRenderer:
   m_ObjectHideFlags: 1

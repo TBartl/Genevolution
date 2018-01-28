@@ -57,7 +57,7 @@ public class PlayerMovement : MonoBehaviour {
 	void FixedUpdate() {
 		justJumped = false;
 
-		float targetSpeed = Input.GetAxisRaw("Horizontal") * maxHorizontalSpeed;
+		float targetSpeed = Input.GetAxis("Horizontal") * maxHorizontalSpeed;
 		float diffHorizontal = targetSpeed - velocity.x;
 		float changeHorizontal = Mathf.Min(
 			Mathf.Abs(diffHorizontal),
@@ -74,6 +74,7 @@ public class PlayerMovement : MonoBehaviour {
 		if (jumpBuffer > 0) {
 			if (recentlyGroundedBuffer > 0) {
 				Jump(stats.jumpPower + 0.5f);
+				StartCoroutine(MonitorJumpArc());
 			} else if (recentlyHugWallBuffer > 0 && remainingWallJumps > 0) {
 				remainingWallJumps -= 1;
 				velocity.x = lastWallSign * wallJumpHorizontalVelocity;
@@ -96,7 +97,6 @@ public class PlayerMovement : MonoBehaviour {
 		recentlyHugWallBuffer = 0;
 		justJumped = true;
 		grounded = false;
-		StartCoroutine(MonitorJumpArc());
 	}
 
 	void OnCollisionStay2D(Collision2D collision) {
