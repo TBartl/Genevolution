@@ -26,7 +26,7 @@ public class PlayerMovement : MonoBehaviour {
 
 	Vector3 velocity;
 	bool grounded = false;
-	bool lastGrounded;
+	int lastGrounded = 0;
 	bool justJumped = false;
 	bool huggingWall = false;
 	float lastWallSign;
@@ -84,7 +84,10 @@ public class PlayerMovement : MonoBehaviour {
 				Jump(1.5f);
 			}
 		}
-		lastGrounded = grounded;
+		if (grounded)
+			lastGrounded = 3;
+		else
+			lastGrounded -= 1;
 		grounded = false;
 		huggingWall = false;
 		rb.velocity = velocity;
@@ -138,7 +141,7 @@ public class PlayerMovement : MonoBehaviour {
 	}
 
 	public bool GetGrounded() {
-		return lastGrounded;
+		return lastGrounded > 0;
 	}
 
 }
