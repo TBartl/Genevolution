@@ -32,10 +32,10 @@ public class PlayerPartAdder : MonoBehaviour {
 	}
 
 	void Update() {
-		CompareAndUpdate(stats.jumpPower, feet);
-		CompareAndUpdate(stats.wallJumps, claw);
-		CompareAndUpdate(stats.airJumps, wing);
-		CompareAndUpdate(stats.vision, eye);
+		CompareAndUpdate(PlayerStats.jumpPower, feet);
+		CompareAndUpdate(PlayerStats.wallJumps, claw);
+		CompareAndUpdate(PlayerStats.airJumps, wing);
+		CompareAndUpdate(PlayerStats.vision, eye);
 	}
 
 	void CompareAndUpdate(int realAmount, PartData partData) {

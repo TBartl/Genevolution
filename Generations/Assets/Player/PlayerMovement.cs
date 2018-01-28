@@ -23,6 +23,9 @@ public class PlayerMovement : MonoBehaviour {
 	public float maxRecentlyGroundedBuffer = .2f;
 	public float maxRecentlyHugWallBuffer = .2f;
 
+	public float maxFootstepInterval = .33f;
+	float footstepInterval;
+
 
 	Vector3 velocity;
 	bool grounded = false;
@@ -73,21 +76,33 @@ public class PlayerMovement : MonoBehaviour {
 
 		if (jumpBuffer > 0) {
 			if (recentlyGroundedBuffer > 0) {
-				Jump(stats.jumpPower + 0.5f);
+				Jump(PlayerStats.jumpPower + 0.5f);
 				StartCoroutine(MonitorJumpArc());
+				SoundManager.S.jump.Play();
 			} else if (recentlyHugWallBuffer > 0 && remainingWallJumps > 0) {
 				remainingWallJumps -= 1;
 				velocity.x = lastWallSign * wallJumpHorizontalVelocity;
 				Jump(1.5f);
+				SoundManager.S.wallJump.Play();
 			} else if (remainingAirJumps > 0) {
 				remainingAirJumps -= 1;
 				Jump(1.5f);
+				SoundManager.S.airJump.Play();
 			}
 		}
 		if (grounded)
 			lastGrounded = 3;
 		else
 			lastGrounded -= 1;
+
+		if (grounded)
+			footstepInterval -= Time.deltaTime * Mathf.Abs(velocity.x) / maxHorizontalSpeed;
+		if (footstepInterval < 0) {
+			footstepInterval = maxFootstepInterval;
+			SoundManager.S.footstep.Play();
+		}
+
+
 		grounded = false;
 		huggingWall = false;
 		rb.velocity = velocity;
@@ -110,8 +125,13 @@ public class PlayerMovement : MonoBehaviour {
 				grounded = true;
 				recentlyGroundedBuffer = maxRecentlyGroundedBuffer;
 				lastGroundPosition = this.transform.position;
-				remainingWallJumps = stats.wallJumps;
-				remainingAirJumps = stats.airJumps;
+				remainingWallJumps = PlayerStats.wallJumps;
+				remainingAirJumps = PlayerStats.airJumps;
+
+				if (lastGrounded <= 0) {
+					SoundManager.S.land.Play();
+					footstepInterval = maxFootstepInterval;
+				}
 			}
 
 			if (Mathf.Abs(normal.x) > .8f) {

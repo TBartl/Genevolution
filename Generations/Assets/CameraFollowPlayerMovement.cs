@@ -18,30 +18,42 @@ public class CameraFollowPlayerMovement : MonoBehaviour {
 
 	Bounds levelBounds;
 
+	Vector3 targetPosition;
+
+	float playerAliveTime;
+
 	// Use this for initialization
 	void Start () {
 		cam = this.GetComponent<Camera>();
-		playerMovement = FindObjectOfType<PlayerMovement>();
-		stats = playerMovement.GetComponent<PlayerStats>();
 		levelBounds = FindObjectOfType<Tilemap>().localBounds;
+		targetPosition = this.transform.position;
 	}
 	
 	// Update is called once per frame
 	void LateUpdate () {
-		if (!playerMovement)
-			return;
 
-		float lastGroundHeight = playerMovement.GetLastGroundPosition().y;
-		Vector3 targetPosition = new Vector3(
-			playerMovement.transform.position.x + lookAheadAmount * playerMovement.GetVelocity().x / playerMovement.maxHorizontalSpeed,
-			lastGroundHeight + verticalOffset,
-			-10);
-
-		if (Mathf.Abs(playerMovement.transform.position.y - lastGroundHeight) >= forceOffset) {
-			targetPosition.y = playerMovement.transform.position.y;
+		if (Nest.currentPlayer != null && playerMovement == null) {
+			playerMovement = Nest.currentPlayer.GetComponent<PlayerMovement>();
+			stats = Nest.currentPlayer.GetComponent<PlayerStats>();
 		}
-		cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, sizeByStat.Evaluate(stats.vision), Time.deltaTime);
 
+		if (playerMovement) {
+			float lastGroundHeight = playerMovement.GetLastGroundPosition().y;
+			targetPosition = new Vector3(
+				playerMovement.transform.position.x + lookAheadAmount * playerMovement.GetVelocity().x / playerMovement.maxHorizontalSpeed,
+				lastGroundHeight + verticalOffset,
+				-10);
+
+			if (Mathf.Abs(playerMovement.transform.position.y - lastGroundHeight) >= forceOffset) {
+				targetPosition.y = playerMovement.transform.position.y;
+			}
+			cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, sizeByStat.Evaluate(PlayerStats.vision), Time.deltaTime);
+			playerAliveTime = .5f;
+		} else if (playerAliveTime <= 0) {
+			targetPosition = Nest.currentlyActiveNest.transform.position + Vector3.back * 10;
+		}
+
+		playerAliveTime -= Time.deltaTime;
 
 		Bounds orthoBounds = OrthoBounds(cam);
 		targetPosition.x = Mathf.Clamp(

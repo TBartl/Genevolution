@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerStats : MonoBehaviour {
-	public int jumpPower = 0;
-	public int wallJumps = 0;
-	public int airJumps = 0;
-	public int vision = 0;
+	public static int jumpPower = 0;
+	public static int wallJumps = 0;
+	public static int airJumps = 0;
+	public static int vision = 1;
 
 	void OnTriggerEnter2D(Collider2D collision) {
 		Pickup pickup = collision.GetComponent<Pickup>();
